@@ -37,6 +37,7 @@
 		<div class="panel" style="margin-top:28px">
 			<p style="color:var(--dim);margin:0 0 6px">Email</p>
 			<a class="contact-big glow-cyan" href="mailto:Chasepelechytik1@gmail.com">Chasepelechytik1@gmail.com</a>
+			<div class="btns" style="margin-top:14px"><a class="btn" href="https://mail.google.com/mail/?view=cm&fs=1&to=Chasepelechytik1@gmail.com&su=Hello%20from%20the%20website" target="_blank" rel="noopener">Email us (Gmail)</a><a class="btn ghost" href="mailto:Chasepelechytik1@gmail.com?subject=Hello%20from%20the%20website">Mail app</a><button class="btn ghost copy-email" type="button">Copy address</button></div>
 			<p style="color:var(--dim);margin:14px 0 0">We usually reply within a few days.</p>
 		</div>
 
@@ -44,17 +45,17 @@
 			<div class="card" id="test">
 				<div class="ico">🧪</div><h3>Become a tester</h3>
 				<p>Have an Android phone? Email your Gmail address with the subject <strong>"Tester"</strong>, and you'll get the invite link for Geometrical Haven's closed test.</p>
-				<div class="btns" style="margin-top:14px"><a class="btn" href="mailto:Chasepelechytik1@gmail.com?subject=Tester&body=Hi!%20I'd%20like%20to%20test%20Geometrical%20Haven.%20My%20Gmail%20is%3A%20">Email to join</a></div>
+				<div class="btns" style="margin-top:14px"><a class="btn" href="https://mail.google.com/mail/?view=cm&fs=1&to=Chasepelechytik1@gmail.com&su=Tester&body=Hi%21%20I%27d%20like%20to%20test%20Geometrical%20Haven.%20My%20Gmail%20is%3A%20" target="_blank" rel="noopener">Email to join (Gmail)</a><a class="btn ghost" href="mailto:Chasepelechytik1@gmail.com?subject=Tester&body=Hi%21%20I%27d%20like%20to%20test%20Geometrical%20Haven.%20My%20Gmail%20is%3A%20">Mail app</a><button class="btn ghost copy-email" type="button">Copy address</button></div>
 			</div>
 			<div class="card">
 				<div class="ico">🐞</div><h3>Support and bugs</h3>
 				<p>Tell us your phone model and what happened. A screenshot helps a lot.</p>
-				<div class="btns" style="margin-top:14px"><a class="btn ghost" href="mailto:Chasepelechytik1@gmail.com?subject=Geometrical%20Haven%20support">Report a bug</a></div>
+				<div class="btns" style="margin-top:14px"><a class="btn" href="https://mail.google.com/mail/?view=cm&fs=1&to=Chasepelechytik1@gmail.com&su=Geometrical%20Haven%20support&body=Phone%20model%3A%0AWhat%20happened%3A%0A" target="_blank" rel="noopener">Report a bug (Gmail)</a><a class="btn ghost" href="mailto:Chasepelechytik1@gmail.com?subject=Geometrical%20Haven%20support&body=Phone%20model%3A%0AWhat%20happened%3A%0A">Mail app</a><button class="btn ghost copy-email" type="button">Copy address</button></div>
 			</div>
 			<div class="card">
 				<div class="ico">📰</div><h3>Press and business</h3>
 				<p>Writing about the game or want to work together? Get in touch for keys, art and info.</p>
-				<div class="btns" style="margin-top:14px"><a class="btn ghost" href="mailto:Chasepelechytik1@gmail.com?subject=Press%20%2F%20business">Email us</a></div>
+				<div class="btns" style="margin-top:14px"><a class="btn" href="https://mail.google.com/mail/?view=cm&fs=1&to=Chasepelechytik1@gmail.com&su=Press%20/%20business" target="_blank" rel="noopener">Email us (Gmail)</a><a class="btn ghost" href="mailto:Chasepelechytik1@gmail.com?subject=Press%20/%20business">Mail app</a><button class="btn ghost copy-email" type="button">Copy address</button></div>
 			</div>
 		</div>
 	</div>
@@ -70,6 +71,25 @@
 		<details><summary>Does the game work offline?</summary><p>Yes. Ads just won't show without an internet connection.</p></details>
 	</div>
 </section>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+document.querySelectorAll('.copy-email').forEach(function (b) {
+	b.addEventListener('click', function () {
+		var email = 'Chasepelechytik1@gmail.com';
+		var done = function () {
+			var t = document.getElementById('toast');
+			t.textContent = 'Copied: ' + email;
+			t.classList.add('show');
+			setTimeout(function () { t.classList.remove('show'); }, 2200);
+		};
+		if (navigator.clipboard && window.isSecureContext) {
+			navigator.clipboard.writeText(email).then(done, function () { prompt('Copy this email address:', email); });
+		} else {
+			prompt('Copy this email address:', email);
+		}
+	});
+});
+</script>
 </main>
 <footer class="site-footer">
 	<div class="wrap">
