@@ -53,7 +53,7 @@ body::before {
 
 a { color: var(--cyan); text-decoration: none; }
 a:hover { text-decoration: underline; }
-img { max-width: 100%; display: block; }
+img { max-width: 100%; height: auto; display: block; }
 main { flex: 1; }
 .wrap { width: min(var(--max), 100% - 40px); margin: 0 auto; }
 
@@ -216,6 +216,10 @@ section + section { border-top: 1px solid var(--line); }
 }
 .shots figure { margin: 0; scroll-snap-align: start; }
 .shots img {
+	width: 100%;
+	height: auto;
+	aspect-ratio: 540 / 1170;
+	object-fit: cover;
 	border-radius: 18px;
 	border: 2px solid rgba(25, 227, 255, 0.45);
 	box-shadow: 0 0 22px rgba(25, 227, 255, 0.18);
