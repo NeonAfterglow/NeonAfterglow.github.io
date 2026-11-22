@@ -67,16 +67,16 @@ that gives your device's hashed ID, and add it to `ADMOB_TEST_DEVICE_HASHES`.
 ## 3. ✅ Website: privacy policy + app-ads.txt (GitHub Pages, free) — live
 
 Both files must be on a public website, and app-ads.txt must sit at the site's **root**.
-A `gtgplazed0.github.io` repository gives exactly that, and the game repo can stay private.
+A `neonafterglow.github.io` repository gives exactly that, and the game repo can stay private.
 
-1. github.com → **New repository** → name it exactly `gtgplazed0.github.io` → **Public** →
+1. github.com → **New repository** → name it exactly `neonafterglow.github.io` → **Public** →
    tick "Add a README" → Create.
 2. In the new repo: **Add file → Upload files** → drag in `index.html`, `privacy.html` and
    `app-ads.txt` from this `docs/` folder → **Commit changes**.
 3. Settings → Pages: it should say the site is live (Source: Deploy from a branch, `main`, `/ (root)`).
    Give it a few minutes, then check:
-   - https://gtgplazed0.github.io/privacy.html
-   - https://gtgplazed0.github.io/app-ads.txt
+   - https://neonafterglow.github.io/privacy.html
+   - https://neonafterglow.github.io/app-ads.txt
 4. `PRIVACY_POLICY_URL` in `economy_config.gd` already points at that privacy address
    (Settings in the game shows a "Privacy policy" button).
 5. If you change these files later, upload them to that repo again.
@@ -92,8 +92,8 @@ requires it (and always in debug builds, for testing).
 - **Data safety**: declare that the app collects the device's advertising ID, approximate
   location (from IP) and app interactions, used by the Google Mobile Ads SDK for
   advertising/analytics, shared with Google. Data is encrypted in transit.
-- **Privacy policy**: `https://gtgplazed0.github.io/privacy.html`.
-- Store listing → contact details → **Website**: `https://gtgplazed0.github.io` (this is where
+- **Privacy policy**: `https://neonafterglow.github.io/privacy.html`.
+- Store listing → contact details → **Website**: `https://neonafterglow.github.io` (this is where
   AdMob looks for app-ads.txt).
 - After the app is live on Play: AdMob → Apps → your app → **link it to the Play listing**.
   AdMob then checks app-ads.txt (can take up to 24 h; Apps → app-ads.txt shows the status).
