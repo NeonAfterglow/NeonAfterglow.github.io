@@ -341,7 +341,8 @@ page("contact.html", "Contact | Neon Afterglow",
 		<h2 class="neon glow-cyan">Quick answers</h2>
 		<details><summary>Is Geometrical Haven on iPhone?</summary><p>It's on its way. The Android version comes first, and the iPhone and iPad version is being prepared for the App Store.</p></details>
 		<details><summary>Is it free?</summary><p>Yes. It's free to play with ads, and optional ads give you bonus coins.</p></details>
-		<details><summary>How do I delete my data?</summary><p>Your progress is stored on your phone: use Settings &gt; Reset All Data in the game, or uninstall it. Leaderboard times are stored online; email us your leaderboard nickname to have them removed. See <a href="delete-data.html">Delete your data</a> for the details.</p></details>
+		<details><summary>How do I delete my data?</summary><p>Your progress is stored on your phone: use Settings &gt; Reset All Data in the game, or uninstall it. If you made an account, delete it in Settings &gt; Account: that removes your cloud save and leaderboard times too. You can also email us. See <a href="delete-data.html">Delete your data</a> for the details.</p></details>
+		<details><summary>Do I need an account?</summary><p>No. Accounts are free and optional. They keep your progress and coins safe in the cloud, so you can switch phones or reinstall, and they let you post times on the world leaderboards and win weekly challenge coins.</p></details>
 		<details><summary>How do I report an offensive leaderboard name?</summary><p>Email us the nickname and the level it appears on, and we'll review it and remove names that break the <a href="terms.html#leaderboards">rules</a>.</p></details>
 		<details><summary>Does the game work offline?</summary><p>Yes. Ads and the world leaderboards just won't show without an internet connection, and your best times upload the next time you're online.</p></details>
 	</div>

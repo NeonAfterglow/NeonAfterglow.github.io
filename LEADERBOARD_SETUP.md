@@ -1,4 +1,4 @@
-# Leaderboards: setup checklist (version 1.1)
+# Leaderboards and accounts: setup checklist (version 1.1)
 
 The game's leaderboard code is done:
 
@@ -20,12 +20,13 @@ Until the Talo plugin is installed, none of this shows in the game: no button, n
 - **Only personal bests are sent.** Anything not sent yet (finished offline, or set in 1.0 before
   boards existed) goes up the next time the game is online, including the moment the leaderboard
   screen is opened.
-- **Player identity** is a random ID made on first launch, kept in `user://leaderboard.cfg`.
-  Settings > Reset All Data does *not* erase it, so a reset doesn't put a second copy of the player
-  on the boards (their old times stay there; a faster run still replaces them).
-- **Nickname**: new players get `Shape1234`. The first time they open a board they're asked to pick
-  one ("Later" keeps the default). 3 to 16 letters, numbers, spaces, `_` or `-`. Talo rejects
-  names with profanity, and the game tells the player to try another.
+- **Player identity is the player's account** (email + password, see section 1b). Guests can look
+  at every board, but nothing is sent until they sign in; then the bests from their progress go up.
+  The same account on any phone is the same player with the same name.
+- **Nickname**: picked when the account is made (stored as the `nickname` player prop, so it
+  follows the account). Change it on the account screen or the board's "Name:" button. 3 to 16
+  letters, numbers, spaces, `_` or `-`, unique (capitals ignored). Talo rejects names with
+  profanity, and the game tells the player to try another.
 - **Anti-cheat**: times faster than `gold time x 0.6` are refused before sending, and debug builds
   (the editor, debug exports) never send. To tighten a level, put its simulated fastest time minus
   a margin in `MIN_TIMES` in `leaderboard_config.gd`. Cheats that get through can be hidden or
@@ -39,7 +40,8 @@ Until the Talo plugin is installed, none of this shows in the game: no button, n
    work: the game falls back to the name sent with each time, but renames only show on new bests.)
 3. **Access keys**: create one key with these scopes:
    `read:players`, `write:players`, `read:leaderboards`, `write:leaderboards`,
-   `write:continuityRequests`.
+   `write:continuityRequests`, and for accounts (section 1b) `read:gameSaves`, `write:gameSaves`.
+   (Edit the existing key to add the two save scopes; the key in `settings.cfg` stays the same.)
 4. **Leaderboards**: create these 10, each with **sort mode: ascending (lowest first)**,
    **unique entries: on**, refresh interval: never.
 
@@ -47,6 +49,63 @@ Until the Talo plugin is installed, none of this shows in the game: no button, n
    (unique by prop: off).
 
    (Running the game from the editor prints this list in the Output panel once Talo is installed.)
+
+## 1b. Accounts and cloud save (you)
+
+Code: `Scripts/Core/account.gd` (autoload `Account`), `Scripts/Core/cloud_save.gd` (packing and
+merging saves), `Scripts/UI/account_screen.gd` (the screen), settings in
+`Scripts/Config/account_config.gd`. Opened from **Settings > Account** (title screen) and the
+leaderboard's **SIGN IN TO POST YOUR TIMES** button.
+
+How it works:
+- **Talo Player Authentication** accounts, in the same Talo game, through the plugin you already
+  have. No other plugin or service. Accounts are optional: the whole game plays without one.
+- **Email + password.** The login name sent to Talo is a SHA-256 of the email (`gs_3f9a…`),
+  because Talo includes every player's login name in leaderboard data that anyone with the app's
+  key can read. Talo keeps the real email only for password reset emails. Never change
+  `ID_SALT` in `account_config.gd` after release, or everyone gets locked out.
+- **Cloud save:** one Talo save per account (named `progress`) holding the whole `save.cfg`
+  (levels, times, coins, skins, themes, achievements, settings) and `weekly.cfg` (weekly times and
+  claimed rewards), plus a revision number. Uploads 6 s after the last change, and when the app
+  goes to the background. The phone checks for a newer copy at start-up, at sign-in and when the
+  app comes back (at most once a minute). A newer copy reloads the game, so it waits while a level
+  is being played.
+- **Conflicts** (played offline on two phones, or a guest with progress signs in): the copies are
+  merged so nothing is lost: faster best time, every unlock and owned item, larger counters, and
+  coins = cloud + what this phone earned or spent since the last sync. Settings follow the cloud.
+- **Sign out** uploads first (refuses while offline with unsaved progress), then wipes the phone
+  back to a fresh guest. **Delete account** (needs the password) deletes the cloud save, then the
+  Talo account and its leaderboard entries, then wipes the phone. **Reset All Data** while signed
+  in also resets the cloud save (the account and its times stay).
+- **Forgot password:** Talo emails a code; the player enters it with a new password. Login codes
+  on every sign-in ("verification") are never turned on.
+- **Weekly rewards** need an account, and claims are in the cloud save, so a week can't be claimed
+  twice on two phones.
+- Sessions last across restarts (Talo's refresh token, `user://talo_session.cfg`). If one runs
+  out, the account screen says "Sign in again"; the phone keeps its progress meanwhile.
+
+In the Talo dashboard:
+1. Add the `read:gameSaves` and `write:gameSaves` scopes to the access key (section 1).
+2. Open the game's settings and look at the **Player authentication** options: leave email
+   verification off. If there's a setting for the password-reset email (sender name, game name),
+   set it to "Geometrical Haven".
+3. **Delete the test players from the nickname-only builds** (service `anonymous`) and their
+   board entries, so the boards start with accounts only. The game also forgets those IDs on the
+   phone (`user://leaderboard.cfg` with a `[player] id` is cleared on start-up).
+
+Test (any build; accounts work from the editor):
+1. Settings > Account > CREATE ACCOUNT with a real email of yours. Check the Talo dashboard:
+   a player with a `talo` alias (`gs_…`), the `nickname` prop, and a save named `progress`.
+2. Earn some coins, wait 10 s, then in the dashboard check the save's `rev` went up.
+3. Sign out: the phone goes back to a fresh start. Sign in again: everything comes back.
+4. Uninstall and reinstall (or delete the game's `user://` folder), sign in: everything comes back.
+5. Two devices (phone + editor): play on one, then open the game on the other and sign in or
+   bring it back to the foreground: the progress appears. Try airplane mode on one while playing
+   on both, then reconnect: nothing is lost and coins add up.
+6. Forgot password: the email with the code arrives (check spam), the new password works.
+7. Delete account with a wrong password (refused, the save comes back), then the right one.
+8. Leaderboard as a guest: boards show, the button says SIGN IN TO POST YOUR TIMES, the results
+   screen says "Sign in (Settings > Account) to post world times".
 
 ## 2. Install the plugin (you)
 
@@ -80,8 +139,10 @@ How it works:
   the level's normal board.
 - **Rewards** for the final rank: #1 1000 coins, #2 600, #3 300, #4-50 50, #51-100 10
   (`WEEKLY_REWARDS`). Opening LEADERBOARD after the week ends shows "Last week's results" with a
-  CLAIM button, then this week's board. Results wait up to 4 weeks. Each week pays once per device
-  (remembered in `user://weekly.cfg`, which Reset All Data doesn't erase).
+  CLAIM button, then this week's board. Results wait up to 4 weeks. Needs an account. Each week
+  pays once per account (remembered in `user://weekly.cfg`, which Reset All Data doesn't erase
+  and which is part of the cloud save). Testing the results panel with `DEBUG_FAKE_ENTRIES` also
+  needs you to be signed in.
 - The LEADERBOARD button says **NEW** until the new week's board has been opened.
 
 In the Talo dashboard, create **one** more leaderboard:
@@ -127,6 +188,19 @@ Until the plugin is installed this does nothing (and the Settings button stays h
 
 ## 4. Before release
 
+Accounts (Nov 23, 2026), live once you push `docs/`:
+- **Privacy policy**: new "Accounts and cloud save (optional)" section (email, password, cloud
+  copy, how to delete); leaderboards now say they need an account.
+- **Delete-data page** (`docs/delete-data.html#account`): new "If you have an account: delete it"
+  (in the game, or by email from the account's address).
+- **Terms**: progress line covers the cloud copy; a short "Accounts" rule.
+- **FAQ** (`build.py`): "Do I need an account?" and the delete answer. Run `python3 build.py`.
+
+When an account deletion email arrives: in the Talo dashboard find the player whose `talo` alias
+is the email's code. To get the code, run in Godot's script editor (or ask Claude):
+`print(preload("res://Scripts/Core/account.gd").login_id("their@email.com"))`. Delete its save,
+then the player, and reply within 30 days.
+
 Done already (Nov 22, 2026), live once you push `docs/`:
 - **Terms of service** (`docs/terms.html#leaderboards`): new section 3 "Leaderboards and the weekly
   challenge" (nickname rules, fair play, weekly rewards, reporting a name); progress line fixed.
@@ -149,17 +223,19 @@ existing AdMob answer and add:
 
 | Section | Data type | Collected | Shared | Ephemeral | Required / optional | Purpose |
 |---|---|---|---|---|---|---|
-| Personal info | **User IDs** (random player ID) | Yes | No | No | Required | App functionality |
-| App activity | **Other user-generated content** (nickname) | Yes | No | No | Required | App functionality |
-| App activity | **Other actions** (best time per level) | Yes | No | No | Required | App functionality |
+| Personal info | **Email address** (account) | Yes | No | No | Optional | App functionality, Account management |
+| Personal info | **User IDs** (account ID) | Yes | No | No | Optional | App functionality, Account management |
+| App activity | **Other user-generated content** (nickname) | Yes | No | No | Optional | App functionality |
+| App activity | **Other actions** (best times, cloud save of progress) | Yes | No | No | Optional | App functionality |
 
 - "Shared" is No: Talo is a service provider processing data for you, which Google doesn't count
   as sharing.
 - Encrypted in transit: **Yes** (HTTPS).
-- Users can request deletion: **Yes**. Deletion URL:
-  `https://neonafterglow.github.io/delete-data.html#leaderboards`
-- "Does your app let users create an account?" stays **No**: the player ID is anonymous, with no
-  sign-up, email or password.
+- Users can request deletion: **Yes**.
+- "Does your app let users create an account?" **Yes**, with "Username and password" (email +
+  password). Delete account URL: `https://neonafterglow.github.io/delete-data.html#account`
+  (Google requires a web way to ask, besides the in-app button).
+- "Optional": the whole game works without an account.
 
 ### Google Play Console → App content → Content rating (you, when you submit 1.1)
 
@@ -177,6 +253,6 @@ The rating may go up a step; that's expected.
 
 ### App Store Connect → App Privacy (you, when you submit 1.1 on iOS)
 
-Already written into `store_listing/ios/APP_STORE_LISTING.md` (App Privacy section): add User ID,
-Gameplay Content and Other User Content, all for App Functionality, linked to the user, not used
-for tracking.
+Already written into `store_listing/ios/APP_STORE_LISTING.md` (App Privacy section): add Email
+Address, User ID, Gameplay Content and Other User Content, all for App Functionality, linked to
+the user, not used for tracking. Give App Review a demo account (see that file).
